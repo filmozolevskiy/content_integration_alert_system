@@ -16,6 +16,11 @@ view: time_dimensions {
   dimension: hour_now {
     type: date_hour sql:CURRENT_TIMESTAMP();; hidden: yes}
 
+  dimension: day_now {
+    type: date
+    sql: CURRENT_TIMESTAMP() ;;
+    hidden: yes
+  }
 
 
   dimension: now {
@@ -27,6 +32,7 @@ view: time_dimensions {
     {% elsif alerting_parameters.time_range._parameter_value == 'minute15' %} split(${minute15_now}, ' ')[OFFSET(1)]
     {% elsif alerting_parameters.time_range._parameter_value == 'minute20' %} split(${minute20_now}, ' ')[OFFSET(1)]
     {% elsif alerting_parameters.time_range._parameter_value == 'minute30' %} split(${minute30_now}, ' ')[OFFSET(1)]
+    {% elsif alerting_parameters.time_range._parameter_value == 'day' %}      CAST(${day_now} AS STRING)
     {% endif %};;
   }
 
@@ -47,6 +53,11 @@ view: time_dimensions {
   dimension: hour_before {
     type: date_hour sql:TIMESTAMP_SUB(PARSE_TIMESTAMP('%F %H',${hour_now}, 'GB'), interval 1 hour);; hidden: yes}
 
+  dimension: day_before {
+    type: date
+    sql: DATE_SUB(${day_now}, INTERVAL 1 DAY) ;;
+    hidden: yes
+  }
 
 
   dimension: before {
@@ -58,6 +69,7 @@ view: time_dimensions {
     {% elsif alerting_parameters.time_range._parameter_value == 'minute15' %} split(${minute15_before}, ' ')[OFFSET(1)]
     {% elsif alerting_parameters.time_range._parameter_value == 'minute20' %} split(${minute20_before}, ' ')[OFFSET(1)]
     {% elsif alerting_parameters.time_range._parameter_value == 'minute30' %} split(${minute30_before}, ' ')[OFFSET(1)]
+    {% elsif alerting_parameters.time_range._parameter_value == 'day' %}      CAST(${day_before} AS STRING)
     {% endif %};;
   }
 
@@ -87,6 +99,7 @@ view: time_dimensions {
     {% elsif alerting_parameters.time_range._parameter_value == 'minute15' %} split(${minute15}, ' ')[OFFSET(1)]
     {% elsif alerting_parameters.time_range._parameter_value == 'minute20' %} split(${minute20}, ' ')[OFFSET(1)]
     {% elsif alerting_parameters.time_range._parameter_value == 'minute30' %} split(${minute30}, ' ')[OFFSET(1)]
+    {% elsif alerting_parameters.time_range._parameter_value == 'day' %}      CAST(${day} AS STRING)
     {% endif %};;
   }
 

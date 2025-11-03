@@ -2,6 +2,7 @@ include: "5_alerting.lkml"
 include: "3_weighted_average.lkml"
 include: "1_parameters.lkml"
 include: "//ecommerce_sandbox/ecommerce_sandbox.model.lkml"
+include: "/models/content_integration_search.model.lkml"
 
 
 ############   KPI VIEWS
@@ -11,10 +12,81 @@ include: "//ecommerce_sandbox/ecommerce_sandbox.model.lkml"
 view: order_count {
   derived_table: {
     explore_source: order_items {
-      timezone: "Europe/London"
+      timezone: "America/Toronto"
       column: time {field: orders.order_purchase_timestamp_hour}
       column: order_count { field: orders.count}
     }
+  }
+}
+
+view: returned_requests_rate {
+  derived_table: {
+    explore_source: content_integration_search {
+      timezone: "America/Toronto"
+      column: time {field: content_integration_search.dayd_hour}
+      column: returned_packages_count {field: content_integration_search.returned_packages_count}
+      column: all_requests_count {field: content_integration_search.all_requests_count}
+      column: content_source {field: content_integration_search.content_source}
+      column: office_id {field: content_integration_search.office_id}
+      column: search_source {field: content_integration_search.search_source}
+      column: search_engine {field: content_integration_search.search_engine}
+      column: site_currency {field: content_integration_search.site_currency}
+    }
+    sql_trigger_value: SELECT MAX(dayd) FROM search_api_stats.gds_raw ;;
+  }
+  
+  dimension: time {
+    type: date_hour
+    sql: ${TABLE}.time ;;
+    hidden: yes
+  }
+  
+  dimension: content_source {
+    type: string
+    sql: ${TABLE}.content_source ;;
+    group_label: "2. Content"
+  }
+  
+  dimension: office_id {
+    type: string
+    sql: ${TABLE}.office_id ;;
+    group_label: "2. Content"
+  }
+  
+  dimension: search_source {
+    type: string
+    sql: ${TABLE}.search_source ;;
+    group_label: "3. Search Source"
+  }
+  
+  dimension: search_engine {
+    type: string
+    sql: ${TABLE}.search_engine ;;
+    group_label: "3. Search Source"
+  }
+  
+  dimension: site_currency {
+    type: string
+    sql: ${TABLE}.site_currency ;;
+    group_label: "3. Search Source"
+  }
+  
+  measure: returned_packages_count {
+    type: sum
+    sql: ${TABLE}.returned_packages_count ;;
+    hidden: yes
+  }
+  
+  measure: all_requests_count {
+    type: sum
+    sql: ${TABLE}.all_requests_count ;;
+    hidden: yes
+  }
+  
+  measure: returned_requests_rate {
+    type: number
+    value_format_name: percent_2
+    sql: ${returned_packages_count} / NULLIF(${all_requests_count}, 0) ;;
   }
 }
 
@@ -43,6 +115,8 @@ view: alerting_metrics {
       FROM
       {% if alerting_parameters.metric_name._parameter_value == 'order_count' %}
        ${order_count.SQL_TABLE_NAME}
+      {% elsif alerting_parameters.metric_name._parameter_value == 'returned_requests_rate' %}
+       ${returned_requests_rate.SQL_TABLE_NAME}
       {% else %}
         SELECT NULL
       {% endif %} view

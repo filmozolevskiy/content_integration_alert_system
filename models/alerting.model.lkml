@@ -23,7 +23,7 @@ explore: alerting {
     }
     filters: {
       field: alerting_parameters.metric_name
-      value: "order_count"
+      value: "returned_requests_rate"
     }
     filters: {
       field: alerting.current_time_window

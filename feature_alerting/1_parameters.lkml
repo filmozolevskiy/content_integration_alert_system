@@ -25,11 +25,13 @@ view: alerting_parameters {
     allowed_value: {value: "minute20"}
     allowed_value: {value: "minute30"}
     allowed_value: {value: "hour"}
+    allowed_value: {value: "day"}
   }
   parameter: metric_name {
     type: unquoted
-    default_value: "order_count"
+    default_value: "returned_requests_rate"
     allowed_value: {value: "order_count"}
+    allowed_value: {value: "returned_requests_rate"}
   }
   parameter: reference_value {
     type: unquoted

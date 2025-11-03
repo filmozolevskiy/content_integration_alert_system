@@ -16,6 +16,11 @@ view: alerting_dt {
       column: yesterday_value {}
       column: last_year_value {}
       column: time_of_day {}
+      column: content_source {}
+      column: office_id {}
+      column: search_source {}
+      column: search_engine {}
+      column: site_currency {}
       bind_filters: {
         from_field:alerting_parameters.weight_last_week
         to_field: alerting_parameters.weight_last_week
@@ -60,6 +65,36 @@ view: alerting_dt {
     # {% endif %} ;;
   }
   dimension: time_of_day {sql:${TABLE}.time_of_day;;}
+  
+  dimension: content_source {
+    type: string
+    sql: ${TABLE}.content_source ;;
+    group_label: "2. Content"
+  }
+  
+  dimension: office_id {
+    type: string
+    sql: ${TABLE}.office_id ;;
+    group_label: "2. Content"
+  }
+  
+  dimension: search_source {
+    type: string
+    sql: ${TABLE}.search_source ;;
+    group_label: "3. Search Source"
+  }
+  
+  dimension: search_engine {
+    type: string
+    sql: ${TABLE}.search_engine ;;
+    group_label: "3. Search Source"
+  }
+  
+  dimension: site_currency {
+    type: string
+    sql: ${TABLE}.site_currency ;;
+    group_label: "3. Search Source"
+  }
 }
 
 explore: alerting_dt {
@@ -71,13 +106,18 @@ view: alerting {
   extends: ["time_dimensions"]
   derived_table: {
     explore_source: alerting_dt {
-      timezone: "Europe/London"
+      timezone: "America/Toronto"
       column: today_value {}
       column: reference_value {}
       column: last_week_value {}
       column: yesterday_value {}
       column: last_year_value {}
       column: time_of_day {}
+      column: content_source {}
+      column: office_id {}
+      column: search_source {}
+      column: search_engine {}
+      column: site_currency {}
       derived_column: std {sql: STDDEV(reference_value-today_value) OVER();;}
       derived_column: mean {sql: AVG(reference_value-today_value) OVER();;}
     }
@@ -136,5 +176,34 @@ view: alerting {
   dimension: time_of_day {
     sql:${TABLE}.time_of_day;;}
 
+  dimension: content_source {
+    type: string
+    sql: ${TABLE}.content_source ;;
+    group_label: "2. Content"
+  }
+  
+  dimension: office_id {
+    type: string
+    sql: ${TABLE}.office_id ;;
+    group_label: "2. Content"
+  }
+  
+  dimension: search_source {
+    type: string
+    sql: ${TABLE}.search_source ;;
+    group_label: "3. Search Source"
+  }
+  
+  dimension: search_engine {
+    type: string
+    sql: ${TABLE}.search_engine ;;
+    group_label: "3. Search Source"
+  }
+  
+  dimension: site_currency {
+    type: string
+    sql: ${TABLE}.site_currency ;;
+    group_label: "3. Search Source"
+  }
 
 }
