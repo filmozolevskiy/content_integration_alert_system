@@ -1,0 +1,77 @@
+# Looker specific
+.localdevloop.log
+.git_tmp/
+manifest-params.json
+
+# Documentation (ignore commands folder but keep migration guides)
+docs/
+!docs/MIGRATION_GUIDE.md
+!docs/DASHBOARD_CHECK.md
+!docs/reviews/
+
+# IDE and Editor files
+.cursor/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS specific
+Thumbs.db
+Desktop.ini
+
+# Python (if using Python for data processing)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Node modules (if using JavaScript/Node)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Environment variables
+.env
+.env.local
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Backup files
+*.bak
+*.backup
+
