@@ -1,5 +1,4 @@
-include: "/model/alerting.model.lkml"
-include: "order_count.linear_reg.lkml"
+# include: "order_count.linear_reg.lkml"  # Commented out - creates circular dependency and order_count view is not used
 
 ##############
 ######## This is the point of entry for any alert to be set

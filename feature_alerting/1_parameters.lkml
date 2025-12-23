@@ -30,7 +30,6 @@ view: alerting_parameters {
   parameter: metric_name {
     type: unquoted
     default_value: "returned_requests_rate"
-    allowed_value: {value: "order_count"}
     allowed_value: {value: "returned_requests_rate"}
   }
   parameter: reference_value {
