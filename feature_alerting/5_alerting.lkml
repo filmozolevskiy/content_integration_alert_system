@@ -101,7 +101,6 @@ view: alerting {
   extends: ["time_dimensions"]
   derived_table: {
     explore_source: alerting_dt {
-      timezone: "America/Toronto"
       column: today_value {}
       column: reference_value {}
       column: last_week_value {}

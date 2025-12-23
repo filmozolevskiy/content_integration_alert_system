@@ -13,7 +13,6 @@ include: "/models/content_integration_search.model.lkml"
 view: returned_requests_rate {
   derived_table: {
     explore_source: content_integration_search {
-      timezone: "America/Toronto"
       column: time {field: content_integration_search.dayd_hour}
       column: returned_packages_count {field: content_integration_search.returned_packages_count}
       column: all_requests_count {field: content_integration_search.all_requests_count}
