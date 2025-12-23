@@ -2,7 +2,7 @@ include: "1_parameters.lkml"
 include: "2_time_dimensions.lkml"
 include: "3_weighted_average.lkml"
 include: "/models/content_integration_search.model.lkml"
-include: "5_alerting.lkml"
+# 5_alerting.lkml is included separately via model include pattern /feature_alerting/*
 
 
 ############   KPI VIEWS

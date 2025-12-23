@@ -1,5 +1,8 @@
 # include: "order_count.linear_reg.lkml"  # Commented out - creates circular dependency and order_count view is not used
 
+include: "1_parameters.lkml"
+include: "2_time_dimensions.lkml"
+
 ##############
 ######## This is the point of entry for any alert to be set
 ######## This view is to be explored directly and joined to parameters. Schedules can then be defined via a Look.
@@ -55,13 +58,6 @@ view: alerting_dt {
     type: sum
     value_format_name:decimal_3
     sql: weighted_average ;;
-  ## if you add more methods for the user to select, you will need liquid syntax below to power the suggestion
-    # sql:
-    # {% if alerting_parameters.reference_value._parameter_value == 'linear_regression' %}
-    #   model_name_prediction.predicted_value
-    # {% elsif alerting_parameters.reference_value._parameter_value == 'weighted_average' %}
-    #   weighted_average
-    # {% endif %} ;;
   }
   dimension: time_of_day {sql:${TABLE}.time_of_day;;}
   
