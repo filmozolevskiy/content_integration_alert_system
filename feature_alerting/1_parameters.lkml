@@ -35,7 +35,6 @@ view: alerting_parameters {
     type: unquoted
     default_value: "weighted_average"
     allowed_value: {value: "weighted_average"}
-    allowed_value: {value: "linear_regression"}
   }
   parameter: remove_trigger_filter {
     label: "Trigger Flag"

@@ -6,7 +6,7 @@ Presented in the "Creating a Sophisticated Alerting System with Looker" [JOIN 20
 [David Lequin](https://www.linkedin.com/in/david-lequin/) for pioneering first version. 
 [Jamie Fry](https://www.linkedin.com/in/fryjamie/) for version 2. 
 [Ben Powis](https://www.linkedin.com/in/benpowis/) for support. 
-[Christelle XU](https://www.linkedin.com/in/christellexu/) for BQML wrappers.
+[Christelle XU](https://www.linkedin.com/in/christellexu/) for support.
 
 Repo upkeep is by Datatonic Looker Team
 
@@ -18,7 +18,7 @@ Using stats, LookML and scheduling capabilities,  we are able to track and alert
 Anomalies detected in KPIs will trigger alerts, which will be sent to users using Looker scheduling capabilities.
 The thresholds for alerts is dynamic, with different approaches to defining what an "anomaly" is.
 
-This block has weighted averages set up as a default to detect anomalies. But you can also provide a linear regression layer, or more advanced modelling (e.g. using BQML) should you wish. See "how to add more anomaly detection methods"
+This block uses weighted averages to detect anomalies (comparing current values to weighted averages of same time yesterday, last week, and last year).
 
 
 ## Why is this block needed?
@@ -36,8 +36,6 @@ This allows looker to be used as a sophisticated alerting system, without needin
 -- Use the explore as is to set up some test schedules and check the logic is working as expected, then expose the explore with just the core fields you believe they require.
 
 -- It is recommended you have this block of code in its own project and import files in.
-
--- There is a BQML templated code dropped in and commented out. If using BigQuery, you can use this template to create your own ML model to create a predicted value to be used as the reference value.
 
 ## Setting an alert
 It is recommended you watch the "Creating a Sophisticated Alerting System with Looker" JOIN 2020 talk for a show and tell. Note, the "Trigger Flag" filter was missing from this talk.
@@ -65,19 +63,6 @@ It is recommended you watch the "Creating a Sophisticated Alerting System with L
 -- Ensure *Deliver this schedule* is set to the same timeframe as the *Parameters Time Frame*
 
 Users will be able to manage all their alerting from this schedule menu.
-
-
-## How to add more anomaly detection methods
-#### Reference values
-This will change the "reference value"
-Create a new lookml file which holds your method code. For example, a bigquery machine learning model (BQML**) with a looker wrapper. This file should create the reference value.
-You will then need to incorporate this into lkml files 4_metrics and 5_alerting.
-You will find in this repo a number of commented out lines in those two files. These lines show you where in the codebase you need to add in lookml to bring in another reference value.
-For this repo, some demo code has been provided for a linear regression method in BQML as a alternative method to weighted averages.
-
-**see these blogs for how to wrap BQML in looker:
-[implementing your first bqml algorithm in looker](https://datatonic.com/insights/implementing-your-first-bqml-algorithm-in-looker/)
-[BQML Linear Model Demo in Looker](https://datatonic.com/insights/bqml-linear-model-looker/)
 
 
 # Screenshots
