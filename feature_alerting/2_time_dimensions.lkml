@@ -2,19 +2,19 @@ view: time_dimensions {
   extension: required
 
   dimension: minute5_now {
-    type: date_minute5 sql:CURRENT_TIMESTAMP() ;; hidden: yes }
+    type: date_minute5 sql:now() ;; hidden: yes }
 
   dimension: minute15_now {
-    type: date_minute15 sql:CURRENT_TIMESTAMP() ;; hidden: yes }
+    type: date_minute15 sql:toStartOfInterval(now(), INTERVAL 15 MINUTE) ;; hidden: yes }
 
   dimension: minute20_now {
-    type: date_minute20 sql:CURRENT_TIMESTAMP() ;; hidden: yes }
+    type: date_minute20 sql:toStartOfInterval(now(), INTERVAL 20 MINUTE) ;; hidden: yes }
 
   dimension: minute30_now {
-    type: date_minute30 sql:CURRENT_TIMESTAMP() ;; hidden: yes }
+    type: date_minute30 sql:toStartOfInterval(now(), INTERVAL 30 MINUTE) ;; hidden: yes }
 
   dimension: hour_now {
-    type: date_hour sql:CURRENT_TIMESTAMP();; hidden: yes}
+    type: date_hour sql:toStartOfHour(now());; hidden: yes}
 
 
 
@@ -22,30 +22,30 @@ view: time_dimensions {
     type: string
     hidden: yes
     sql:
-    {% if alerting_parameters.time_range._parameter_value == 'hour' %}        split(${hour_now}, ' ')[OFFSET(1)]
-    {% elsif alerting_parameters.time_range._parameter_value == 'minute5' %}  split(${minute5_now}, ' ')[OFFSET(1)]
-    {% elsif alerting_parameters.time_range._parameter_value == 'minute15' %} split(${minute15_now}, ' ')[OFFSET(1)]
-    {% elsif alerting_parameters.time_range._parameter_value == 'minute20' %} split(${minute20_now}, ' ')[OFFSET(1)]
-    {% elsif alerting_parameters.time_range._parameter_value == 'minute30' %} split(${minute30_now}, ' ')[OFFSET(1)]
+    {% if alerting_parameters.time_range._parameter_value == 'hour' %}        formatDateTime(${hour_now}, '%H:%M')
+    {% elsif alerting_parameters.time_range._parameter_value == 'minute5' %}  formatDateTime(${minute5_now}, '%H:%M')
+    {% elsif alerting_parameters.time_range._parameter_value == 'minute15' %} formatDateTime(${minute15_now}, '%H:%M')
+    {% elsif alerting_parameters.time_range._parameter_value == 'minute20' %} formatDateTime(${minute20_now}, '%H:%M')
+    {% elsif alerting_parameters.time_range._parameter_value == 'minute30' %} formatDateTime(${minute30_now}, '%H:%M')
     {% endif %};;
   }
 
 
 
   dimension: minute5_before {
-    type: date_minute5 sql:TIMESTAMP_SUB(PARSE_TIMESTAMP('%F %H:%M',${minute5_now}, 'GB'), interval 5 minute);; hidden: yes }
+    type: date_minute5 sql:subtractMinutes(now(), 5);; hidden: yes }
 
   dimension: minute15_before {
-    type: date_minute15 sql:TIMESTAMP_SUB(PARSE_TIMESTAMP('%F %H:%M',${minute15_now}, 'GB'), interval 15 minute);; hidden: yes }
+    type: date_minute15 sql:subtractMinutes(now(), 15);; hidden: yes }
 
   dimension: minute20_before {
-    type: date_minute20 sql:TIMESTAMP_SUB(PARSE_TIMESTAMP('%F %H:%M',${minute20_now}, 'GB'), interval 20 minute);; hidden: yes }
+    type: date_minute20 sql:subtractMinutes(now(), 20);; hidden: yes }
 
   dimension: minute30_before {
-    type: date_minute30 sql:TIMESTAMP_SUB(PARSE_TIMESTAMP('%F %H:%M',${minute30_now}, 'GB'), interval 30 minute);; hidden: yes }
+    type: date_minute30 sql:subtractMinutes(now(), 30);; hidden: yes }
 
   dimension: hour_before {
-    type: date_hour sql:TIMESTAMP_SUB(PARSE_TIMESTAMP('%F %H',${hour_now}, 'GB'), interval 1 hour);; hidden: yes}
+    type: date_hour sql:subtractHours(now(), 1);; hidden: yes}
 
 
 
@@ -53,11 +53,11 @@ view: time_dimensions {
     type: string
     hidden: yes
     sql:
-    {% if alerting_parameters.time_range._parameter_value == 'hour' %}        split(${hour_before}, ' ')[OFFSET(1)]
-    {% elsif alerting_parameters.time_range._parameter_value == 'minute5' %}  split(${minute5_before}, ' ')[OFFSET(1)]
-    {% elsif alerting_parameters.time_range._parameter_value == 'minute15' %} split(${minute15_before}, ' ')[OFFSET(1)]
-    {% elsif alerting_parameters.time_range._parameter_value == 'minute20' %} split(${minute20_before}, ' ')[OFFSET(1)]
-    {% elsif alerting_parameters.time_range._parameter_value == 'minute30' %} split(${minute30_before}, ' ')[OFFSET(1)]
+    {% if alerting_parameters.time_range._parameter_value == 'hour' %}        formatDateTime(${hour_before}, '%H:%M')
+    {% elsif alerting_parameters.time_range._parameter_value == 'minute5' %}  formatDateTime(${minute5_before}, '%H:%M')
+    {% elsif alerting_parameters.time_range._parameter_value == 'minute15' %} formatDateTime(${minute15_before}, '%H:%M')
+    {% elsif alerting_parameters.time_range._parameter_value == 'minute20' %} formatDateTime(${minute20_before}, '%H:%M')
+    {% elsif alerting_parameters.time_range._parameter_value == 'minute30' %} formatDateTime(${minute30_before}, '%H:%M')
     {% endif %};;
   }
 
@@ -82,39 +82,38 @@ view: time_dimensions {
   dimension: time_of_day {
     type: string
     sql:
-    {% if alerting_parameters.time_range._parameter_value == 'hour' %}        split(${hour}, ' ')[OFFSET(1)]
-    {% elsif alerting_parameters.time_range._parameter_value == 'minute5' %}  split(${minute5}, ' ')[OFFSET(1)]
-    {% elsif alerting_parameters.time_range._parameter_value == 'minute15' %} split(${minute15}, ' ')[OFFSET(1)]
-    {% elsif alerting_parameters.time_range._parameter_value == 'minute20' %} split(${minute20}, ' ')[OFFSET(1)]
-    {% elsif alerting_parameters.time_range._parameter_value == 'minute30' %} split(${minute30}, ' ')[OFFSET(1)]
+    {% if alerting_parameters.time_range._parameter_value == 'hour' %}        formatDateTime(${hour}, '%H:%M')
+    {% elsif alerting_parameters.time_range._parameter_value == 'minute5' %}  formatDateTime(${minute5}, '%H:%M')
+    {% elsif alerting_parameters.time_range._parameter_value == 'minute15' %} formatDateTime(${minute15}, '%H:%M')
+    {% elsif alerting_parameters.time_range._parameter_value == 'minute20' %} formatDateTime(${minute20}, '%H:%M')
+    {% elsif alerting_parameters.time_range._parameter_value == 'minute30' %} formatDateTime(${minute30}, '%H:%M')
     {% endif %};;
   }
 
   dimension: day {
     type: date
     hidden: yes
-    sql: ${TABLE}.time ;;
+    sql: toDate(${TABLE}.time) ;;
   }
   dimension: today {
     type: date
     hidden: yes
-    sql: CURRENT_TIMESTAMP() ;;
-#     sql: TIMESTAMP('2018-08-01') ;;  # if testing historical data, set a date within that date range
+    sql: today() ;;
   }
   dimension: is_yesterday {
     type: yesno
     hidden: yes
-    sql: ${day} = DATE_SUB(${today}, INTERVAL 1 DAY);;
+    sql: ${day} = subtractDays(${today}, 1);;
   }
   dimension: is_last_week {
     type: yesno
     hidden: yes
-    sql: ${day} = DATE_SUB(${today}, INTERVAL 7 DAY);;
+    sql: ${day} = subtractDays(${today}, 7);;
   }
   dimension: is_last_year {
     type: yesno
     hidden: yes
-    sql: ${day} = DATE_SUB(${today}, INTERVAL 364 DAY);;
+    sql: ${day} = subtractDays(${today}, 364);;
   }
   dimension: is_today {
     type: yesno

@@ -62,15 +62,14 @@ view: alerting {
   extends: ["time_dimensions"]
   derived_table: {
     explore_source: alerting_dt {
-      timezone: "Europe/London"
       column: today_value {}
       column: reference_value {}
       column: last_week_value {}
       column: yesterday_value {}
       column: last_year_value {}
       column: time_of_day {}
-      derived_column: std {sql: STDDEV(reference_value-today_value) OVER();;}
-      derived_column: mean {sql: AVG(reference_value-today_value) OVER();;}
+      derived_column: std {sql: stddevPop(reference_value-today_value) OVER();;}
+      derived_column: mean {sql: avg(reference_value-today_value) OVER();;}
     }
   }
 

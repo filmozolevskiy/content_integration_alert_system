@@ -1,3 +1,5 @@
+connection: "ota_phoenix"
+
 include: "/feature_alerting/*"
 
 
