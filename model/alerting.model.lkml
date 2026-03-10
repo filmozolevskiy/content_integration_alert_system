@@ -1,5 +1,7 @@
 include: "/feature_alerting/*"
 
+# Use same ClickHouse connection as content_integration_search
+connection: "ota_phoenix"
 
 explore: alerting {
   hidden: no
@@ -23,7 +25,7 @@ explore: alerting {
     }
     filters: {
       field: alerting_parameters.metric_name
-      value: "order_count"
+      value: "search_count"
     }
     filters: {
       field: alerting.current_time_window

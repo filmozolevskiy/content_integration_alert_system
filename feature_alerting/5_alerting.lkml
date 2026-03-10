@@ -1,5 +1,4 @@
 include: "/model/alerting.model.lkml"
-include: "order_count.linear_reg.lkml"
 
 ##############
 ######## This is the point of entry for any alert to be set
@@ -9,7 +8,6 @@ include: "order_count.linear_reg.lkml"
 view: alerting_dt {
   derived_table: {
     explore_source: alerting_metrics {
-      # column: predicted_value {field:linear_reg_metrics.predicted_value}   #  if you create  linear model, or other "methods", you will need a value to ref
       column: weighted_average {}
       column: today_value {field:alerting_metrics.today_value}
       column: last_week_value {}
@@ -51,13 +49,6 @@ view: alerting_dt {
     type: sum
     value_format_name:decimal_3
     sql: weighted_average ;;
-  ## if you add more methods for the user to select, you will need liquid syntax below to power the suggestion
-    # sql:
-    # {% if alerting_parameters.reference_value._parameter_value == 'linear_regression' %}
-    #   model_name_prediction.predicted_value
-    # {% elsif alerting_parameters.reference_value._parameter_value == 'weighted_average' %}
-    #   weighted_average
-    # {% endif %} ;;
   }
   dimension: time_of_day {sql:${TABLE}.time_of_day;;}
 }
@@ -78,8 +69,8 @@ view: alerting {
       column: yesterday_value {}
       column: last_year_value {}
       column: time_of_day {}
-      derived_column: std {sql: STDDEV(reference_value-today_value) OVER();;}
-      derived_column: mean {sql: AVG(reference_value-today_value) OVER();;}
+      derived_column: std {sql: stddevPop(reference_value-today_value) OVER();;}
+      derived_column: mean {sql: avg(reference_value-today_value) OVER();;}
     }
   }
 
