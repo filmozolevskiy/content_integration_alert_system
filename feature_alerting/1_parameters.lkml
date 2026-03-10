@@ -28,8 +28,8 @@ view: alerting_parameters {
   }
   parameter: metric_name {
     type: unquoted
-    default_value: "order_count"
-    allowed_value: {value: "order_count"}
+    default_value: "search_count"
+    allowed_value: {value: "search_count"}
   }
   parameter: reference_value {
     type: unquoted

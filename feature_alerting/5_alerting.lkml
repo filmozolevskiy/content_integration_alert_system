@@ -69,8 +69,8 @@ view: alerting {
       column: yesterday_value {}
       column: last_year_value {}
       column: time_of_day {}
-      derived_column: std {sql: STDDEV(reference_value-today_value) OVER();;}
-      derived_column: mean {sql: AVG(reference_value-today_value) OVER();;}
+      derived_column: std {sql: stddevPop(reference_value-today_value) OVER();;}
+      derived_column: mean {sql: avg(reference_value-today_value) OVER();;}
     }
   }
 

@@ -1,30 +1,50 @@
 include: "5_alerting.lkml"
 include: "3_weighted_average.lkml"
 include: "1_parameters.lkml"
-include: "//ecommerce_sandbox/ecommerce_sandbox.model.lkml"
+# Uses search_api_stats.gds_raw from ota_phoenix (ClickHouse)
 
 
 ############   KPI VIEWS
-###### Any metrics to be exposed in the Alerting explore needs to be defined as a Derived Table below
+###### Uses search_api_stats.gds_raw (ClickHouse) with sql_table_name + liquid
 ############
 
-view: order_count {
-  derived_table: {
-    explore_source: order_items {
-      timezone: "Europe/London"
-      column: time {field: orders.order_purchase_timestamp_hour}
-      column: order_count { field: orders.count}
-    }
+view: search_count {
+  sql_table_name: |
+    (SELECT
+      {% if alerting_parameters.time_range._parameter_value == 'hour' %}
+      toStartOfHour(date_added) AS time
+      {% elsif alerting_parameters.time_range._parameter_value == 'minute5' %}
+      toStartOfFiveMinute(date_added) AS time
+      {% elsif alerting_parameters.time_range._parameter_value == 'minute15' %}
+      toStartOfInterval(date_added, INTERVAL 15 MINUTE) AS time
+      {% elsif alerting_parameters.time_range._parameter_value == 'minute20' %}
+      toStartOfInterval(date_added, INTERVAL 20 MINUTE) AS time
+      {% elsif alerting_parameters.time_range._parameter_value == 'minute30' %}
+      toStartOfInterval(date_added, INTERVAL 30 MINUTE) AS time
+      {% else %}
+      toStartOfFiveMinute(date_added) AS time
+      {% endif %} AS time,
+      count(*) AS search_count
+    FROM search_api_stats.gds_raw
+    WHERE date_added >= '2025-01-01'
+      AND ((api_user IN ('kayak', 'kayakapp') AND site_id = 1) OR api_user NOT IN ('kayak', 'kayakapp'))
+    GROUP BY 1)
+  dimension: time {
+    type: time
+    sql: ${TABLE}.time ;;
+    hidden: yes
+  }
+  measure: search_count {
+    type: sum
+    value_format_name: decimal_0
+    sql: ${TABLE}.search_count ;;
   }
 }
 
 
 ############
-###### The alerting_metrics view gathers the KPI views together and filter on the time of the day (00:00 to 23:00)
+###### The alerting_metrics view gathers KPI data and filters on the time of day
 ############
-###### Note { below is not efficient, but for demo this is easiest code to understand logic
-###### Production code should use sql_table_name with liquid, and sql_always_where in explore, whilst aking into account DB dielcts for partitions/clustering/indices etc
-#}
 explore: alerting_metrics {
   hidden: no
   join: alerting_parameters {}
@@ -32,15 +52,17 @@ explore: alerting_metrics {
 
 view: alerting_metrics {
   extends: ["weighted_average"]
-  derived_table: {
-    sql:
-      SELECT *
-      FROM
-      {% if alerting_parameters.metric_name._parameter_value == 'order_count' %}
-       ${order_count.SQL_TABLE_NAME}
-      {% else %}
-        SELECT NULL
-      {% endif %} view
-      WHERE extract(time FROM view.time) <= TIME_ADD(extract(time FROM CURRENT_TIMESTAMP()), INTERVAL 15 minute);;   #  filters the data for each day to match the time period
-  }
+  sql_table_name: |
+    {% if alerting_parameters.metric_name._parameter_value == 'search_count' %}
+    (SELECT * FROM ${search_count.SQL_TABLE_NAME} view
+    WHERE toDateTime(view.time) <= now() +
+      {% if alerting_parameters.time_range._parameter_value == 'hour' %}INTERVAL 1 HOUR
+      {% elsif alerting_parameters.time_range._parameter_value == 'minute5' %}INTERVAL 5 MINUTE
+      {% elsif alerting_parameters.time_range._parameter_value == 'minute15' %}INTERVAL 15 MINUTE
+      {% elsif alerting_parameters.time_range._parameter_value == 'minute20' %}INTERVAL 20 MINUTE
+      {% elsif alerting_parameters.time_range._parameter_value == 'minute30' %}INTERVAL 30 MINUTE
+      {% else %}INTERVAL 15 MINUTE{% endif %})
+    {% else %}
+    (SELECT NULL AS time, NULL AS search_count)
+    {% endif %}
 }
