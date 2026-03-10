@@ -28,11 +28,6 @@ view: order_count {
 explore: alerting_metrics {
   hidden: no
   join: alerting_parameters {}
-  # join: linear_reg_metrics {
-  # if you create a linear regression model. you will need to join via Time of day.
-  #   sql_on:${linear_reg_metrics.time}=${alerting_metrics.time_of_day};;
-  #   relationship: one_to_one
-  # }
 }
 
 view: alerting_metrics {
@@ -49,21 +44,3 @@ view: alerting_metrics {
       WHERE extract(time FROM view.time) <= TIME_ADD(extract(time FROM CURRENT_TIMESTAMP()), INTERVAL 15 minute);;   #  filters the data for each day to match the time period
   }
 }
-
-# view: linear_reg_metrics {
-#   if you create a linear regression model. you will need view object to point too.
-#   derived_table: {
-#     sql:
-#       {% if alerting_parameters.metric_name._parameter_value == 'order_count' %}
-#       SELECT * FROM ${model_name_prediction.SQL_TABLE_NAME}
-#       {% else %}
-#         SELECT NULL AS time, NULL as predicted_your_dependent_variable_name
-#       {% endif %} ;;
-#   }
-
-#   dimension: time {
-#     type:string}
-
-#   measure: predicted_value {
-#     type:sum sql:${TABLE}.predicted_your_dependent_variable_name;;}
-# }
